@@ -618,6 +618,77 @@ bool load_config_file( std::string filename )
 	}
 	std::cout << "Found " << i << " clipping planes ... " << std::endl; 
 	
+	// read all the cell color definitions 
+	
+	node = xml_find_node( config_root , "cell_color_definitions" ); 
+	
+	i = 0; 
+	node1 = node.first_child(); 	
+	
+	while( node1 )
+	{
+		cell_color_definitions.resize( cell_color_definitions.size()+1 ); 
+		
+		// set type 
+		
+		cell_color_definitions[i].type = atoi( node1.attribute( "type" ).value() );
+		std::cout << "type: " << cell_color_definitions[i].type << std::endl; 
+	
+		// live 
+		node = xml_find_node( node1 , "live" ); 
+		std::string temp = xml_get_string_value( node, "cytoplasm" ); 
+		csv_to_vector( temp.c_str() , cell_color_definitions[i].live.cyto_pigment ); 
+		std::cout << cell_color_definitions[i].live.cyto_pigment << std::endl; 
+		
+		temp = xml_get_string_value( node, "nuclear" ); 
+		csv_to_vector( temp.c_str() , cell_color_definitions[i].live.nuclear_pigment ); 
+		std::cout << cell_color_definitions[i].live.nuclear_pigment << std::endl; 
+
+		temp = xml_get_string_value( node, "finish" ); 
+		csv_to_vector( temp.c_str() , cell_color_definitions[i].live.finish ); 
+		std::cout << cell_color_definitions[i].live.finish << std::endl << std::endl;
+		node = node.parent(); 
+		
+		// apoptotic 
+		node = xml_find_node( node1 , "apoptotic" ); 
+		temp = xml_get_string_value( node, "cytoplasm" ); 
+		csv_to_vector( temp.c_str() , cell_color_definitions[i].apoptotic.cyto_pigment ); 
+		std::cout << cell_color_definitions[i].apoptotic.cyto_pigment << std::endl; 
+		
+		temp = xml_get_string_value( node, "nuclear" ); 
+		csv_to_vector( temp.c_str() , cell_color_definitions[i].apoptotic.nuclear_pigment ); 
+		std::cout << cell_color_definitions[i].apoptotic.nuclear_pigment << std::endl; 
+
+		temp = xml_get_string_value( node, "finish" ); 
+		csv_to_vector( temp.c_str() , cell_color_definitions[i].apoptotic.finish ); 
+		std::cout << cell_color_definitions[i].apoptotic.finish << std::endl; 
+		node = node.parent(); 
+		
+		// necrotic 
+		node = xml_find_node( node1 , "necrotic" ); 
+		temp = xml_get_string_value( node, "cytoplasm" ); 
+		csv_to_vector( temp.c_str() , cell_color_definitions[i].necrotic.cyto_pigment ); 
+		std::cout << cell_color_definitions[i].necrotic.cyto_pigment << std::endl; 
+		
+		temp = xml_get_string_value( node, "nuclear" ); 
+		csv_to_vector( temp.c_str() , cell_color_definitions[i].necrotic.nuclear_pigment ); 
+		std::cout << cell_color_definitions[i].necrotic.nuclear_pigment << std::endl; 
+
+		temp = xml_get_string_value( node, "finish" ); 
+		csv_to_vector( temp.c_str() , cell_color_definitions[i].necrotic.finish ); 
+		std::cout << cell_color_definitions[i].necrotic.finish << std::endl; 
+		node = node.parent(); 
+
+
+		
+		node1 = node1.next_sibling(); 
+		i++; 
+	}
+	std::cout << "Found " << cell_color_definitions.size()  << " cell color definitions ... " << std::endl; 
+	
+	return false; 
+	
+	
 	return false; 
 
 	// set options 
@@ -626,17 +697,6 @@ bool load_config_file( std::string filename )
 	return false; 
 	
 	
-	
-	cp.coefficients = {0,-1,0,0};
-	default_POV_options.clipping_planes.push_back( cp ); 
-
-	cp.coefficients = {-1,0,0,0};
-	default_POV_options.clipping_planes.push_back( cp ); 
-
-	cp.coefficients = {0,0,1,0};
-	default_POV_options.clipping_planes.push_back( cp ); 
-
-
 
 
 /*
