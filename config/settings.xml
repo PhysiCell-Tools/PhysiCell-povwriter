@@ -32,8 +32,8 @@
 		<!-- If the cell's type is not recognized, the standard coloring function will default to 0 --> 
 		<cell_colors type="0">
 			<live>
-				<cytoplasm>0,1,0,0</cytoplasm> <!-- red,green,blue,filter --> 
-				<nuclear>0,0.125,0,0</nuclear>
+				<cytoplasm>.5,1,.5,0</cytoplasm> <!-- red,green,blue,filter --> 
+				<nuclear>0.06,0.125,.06,0</nuclear>
 				<finish>0.05,1,0.1</finish> <!-- ambient,diffuse,specular -->
 			</live>
 			<apoptotic>
@@ -50,8 +50,8 @@
 		
 		<cell_colors type="1">
 			<live>
-				<cytoplasm>0,0,1,0</cytoplasm> <!-- red,green,blue,filter --> 
-				<nuclear>0,0,0.125,0</nuclear>
+				<cytoplasm>0.5,0.5,1,0</cytoplasm> <!-- red,green,blue,filter --> 
+				<nuclear>0.06,0.06,0.125,0</nuclear>
 				<finish>0.05,1,0.1</finish> <!-- ambient,diffuse,specular -->
 			</live>
 			<apoptotic>
