@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <povwriter_settings>
-
 	<camera>
 	</camera>
 
@@ -22,7 +21,7 @@
 	</clipping_planes>
 	
 	<!-- if using standard coloring (above), these will be used --> 
-	<!-- otherwise, the code will look for a user-defined color/finish function --> 
+	<!-- otherwise, the code will look for a user-defined color/finish function -->  <!-- done --> 
 	<cell_color_definitions>
 		<!-- each cell's type will be used to choose a coloring scheme for live, apoptotic, or necrotic -->
 		<!-- If the cell's type is not recognized, the standard coloring function will default to 0 --> 

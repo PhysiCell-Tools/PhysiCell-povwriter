@@ -33,7 +33,7 @@
 #                                                                             #
 # BSD 3-Clause License (see https://opensource.org/licenses/BSD-3-Clause)     #
 #                                                                             #
-# Copyright (c) 2015-2018, Paul Macklin and the PhysiCell Project             #
+# Copyright (c) 2015-2019, Paul Macklin and the PhysiCell Project             #
 # All rights reserved.                                                        #
 #                                                                             #
 # Redistribution and use in source and binary forms, with or without          #
@@ -150,28 +150,12 @@ int main( int argc, char* argv[] )
 	std::vector< std::vector<double> > MAT = read_matlab( options.filename.c_str() );
 	std::cout << "Matrix size: " << MAT.size() << " x " << MAT[0].size() << std::endl; 
 	
-	return -2; 
-
 	// set options 
-	
-	pigment_and_finish_function = cancer_immune_pigment_and_finish_function; 
-	
-	Clipping_Plane cp; 
 
-	cp.coefficients = {0,-1,0,0};
-	default_POV_options.clipping_planes.push_back( cp ); 
-
-	cp.coefficients = {-1,0,0,0};
-	default_POV_options.clipping_planes.push_back( cp ); 
-
-	cp.coefficients = {0,0,1,0};
-	default_POV_options.clipping_planes.push_back( cp ); 
-	
 	double pi = 3.141592653589793;
 	
 	default_POV_options.set_camera_from_spherical_location( 1500, 5*pi/4.0 , pi/3.0 ); // do
 	default_POV_options.light_position[0] *= 0.5; 
-
 	
 	// start output 
 	char temp [1024]; 
@@ -179,17 +163,8 @@ int main( int argc, char* argv[] )
 	options.filename = temp ; 
 	std::ofstream os( options.filename.c_str() , std::ios::out ); 
 	
-	
 	std::cout << "Creating file " << options.filename << " for output ... " << std::endl; 
 	Write_POV_start( os ); 
-	
-	std::vector<double> pigment = {1,0,0,0}; 
-	std::vector<double> finish = {0.1,0.8,0.5}; 
-	
-	std::vector<double> center = {0,0,0};
-	double radius = 500.0; 
-	
-	double temp_constant = 0.238732414637843; // 3/(4*pi)
 	
 	// now, place the cells	
 	std::cout << "Writing " << MAT[0].size() << " cells ... " <<std::endl; 
@@ -259,7 +234,6 @@ void plot_cell( std::ostream& os, std::vector<std::vector<double>>& MAT, int i )
 	
 	if( render )
 	{
-		// alt_pigment_and_finish_function( cyto_pigment, nuclear_pigment, finish, MAT, i ); 
 		pigment_and_finish_function( colors, MAT, i ); 
 
 		if( intersect )
@@ -675,114 +649,6 @@ bool load_config_file( std::string filename )
 		i++; 
 	}
 	std::cout << "Found " << cell_color_definitions.size()  << " cell color definitions ... " << std::endl; 
-	
-	return false; 
-	
-	
-	return false; 
-
-	// set options 
-	
-
-	return false; 
-	
-	
-
-
-/*
-	max_time = xml_get_double_value( node , "max_time" );
-	time_units = xml_get_string_value( node, "time_units" ) ;
-	space_units = xml_get_string_value( node, "space_units" ) ;
-
-	node = node.parent(); 
-	
-	// save options 
-	
-	node = xml_find_node( physicell_config_root , "save" ); 
-	
-	folder = xml_get_string_value( node, "folder" ) ;
-	
-	node = xml_find_node( node , "full_data" ); 
-	full_save_interval = xml_get_double_value( node , "interval" );
-	enable_full_saves = xml_get_bool_value( node , "enable" ); 
-	node = node.parent(); 
-	
-	node = xml_find_node( node , "SVG" ); 
-	SVG_save_interval = xml_get_double_value( node , "interval" );
-	enable_SVG_saves = xml_get_bool_value( node , "enable" ); 
-	node = node.parent(); 
-	
-	node = xml_find_node( node , "legacy_data" ); 
-	enable_legacy_saves = xml_get_bool_value( node , "enable" );
-	node = node.parent(); 
-
-	
-
-	
-	
-	char temp [1024]; 
-	sprintf( temp , "./cancer_immune_3D/output%08i_cells_physicell.mat" , atoi( argv[1] ) );
-	std::cout << "Processing file " << temp << "... " << std::endl; 
-
-	// read the matrix 
-	std::string filename = temp; 
-
-
-	
-	
-	options.filename = temp; 
-	
-	// read camera options 
-
-
-	// set options 
-	
-	pigment_and_finish_function = cancer_immune_pigment_and_finish_function; 
-	
-	Clipping_Plane cp; 
-
-	cp.coefficients = {0,-1,0,0};
-	default_POV_options.clipping_planes.push_back( cp ); 
-
-	cp.coefficients = {-1,0,0,0};
-	default_POV_options.clipping_planes.push_back( cp ); 
-
-	cp.coefficients = {0,0,1,0};
-	default_POV_options.clipping_planes.push_back( cp ); 
-	
-	double pi = 3.141592653589793;
-	
-	default_POV_options.set_camera_from_spherical_location( 1500, 5*pi/4.0 , pi/3.0 ); // do
-	default_POV_options.light_position[0] *= 0.5; 
-
-
-
-	pigment_and_finish_function = cancer_immune_pigment_and_finish_function; 
-*/
-
-	
-	// read other options 
-	
-	// get save directory 
-	
-	
-/*	
-	PhysiCell_settings.read_from_pugixml(); 
-	
-	// now read the microenvironment (optional) 
-	
-	if( !setup_microenvironment_from_XML( physicell_config_root ) )
-	{
-		std::cout << std::endl 
-				  << "Warning: microenvironment_setup not found in " << filename << std::endl 
-				  << "         Either manually setup microenvironment in setup_microenvironment() (custom.cpp)" << std::endl
-				  << "         or consult documentation to add microenvironment_setup to your configuration file." << std::endl << std::endl; 
-	}
-	
-	// now read user parameters
-	
-	parameters.read_from_pugixml( physicell_config_root ); 
-*/ 	
 	
 	return true; 	
 }
