@@ -77,19 +77,36 @@
 
 using namespace BioFVM; 
 
-void pigment_and_finish_function( 
-	std::vector<double>& cyto_pigment, 
-	std::vector<double>& nuclear_pigment, 
-	std::vector<double>& finish, 
-	std::vector<std::vector<double>>& MAT , 
-	int i ); 
+class cell_colorset
+{
+ public:
+	std::vector<double> cyto_pigment; 
+	std::vector<double> nuclear_pigment; 
+	std::vector<double> finish; 
 	
-void alt_pigment_and_finish_function( 
-	std::vector<double>& cyto_pigment, 
-	std::vector<double>& nuclear_pigment, 
-	std::vector<double>& finish, 
-	std::vector<std::vector<double>>& MAT , 
-	int i ); 
+	cell_colorset(); 
+}; 
+
+class cell_colors
+{
+ public:
+	int type; 
+	cell_colorset live; 
+	cell_colorset apoptotic; 
+	cell_colorset necrotic; 
+	
+	cell_colors(); 
+};
+
+std::vector<cell_colors> cell_color_definitions; 
+
+void setup_cell_color_definitions( void ); 
+
+void (*pigment_and_finish_function)(cell_colorset&,std::vector<std::vector<double>>&,int); 
+	
+void cancer_immune_pigment_and_finish_function( cell_colorset& colors, std::vector<std::vector<double>>& MAT, int i ); 
+
+void standard_pigment_and_finish_function( cell_colorset& colors, std::vector<std::vector<double>>& MAT, int i );  
 
 void plot_cell( std::ostream& os, std::vector<std::vector<double>>& MAT, int i );
 
@@ -107,6 +124,8 @@ int main( int argc, char* argv[] )
 	std::cout << MAT.size() << " x " << MAT[0].size() << std::endl; 
 	
 	// set options 
+	
+	pigment_and_finish_function = cancer_immune_pigment_and_finish_function; 
 	
 	Clipping_Plane cp; 
 
@@ -154,14 +173,22 @@ int main( int argc, char* argv[] )
 
 void plot_cell( std::ostream& os, std::vector<std::vector<double>>& MAT, int i )
 {
-	static std::vector<double> cyto_pigment = {1,1,1,0}; 
-	static std::vector<double> nuclear_pigment = {.5,.5,.5,0};
-	
-	static std::vector<double> finish = {0.05,1,0.1};
+	// bookkeeping 
+	static cell_colorset colors; 
+	static bool setup_done = false; 
+	if( setup_done == false )
+	{
+		colors.cyto_pigment = {1,1,1,0}; 
+		colors.nuclear_pigment = {.5,.5,.5,0};
+		colors.finish = {0.05,1,0.1};
+		setup_done = true; 
+	}
 	
 	static std::vector<double> center = {0,0,0};
 	static double radius; 
 	static double temp_constant = 0.238732414637843; // 3/(4*pi)
+	
+	// get position 
 	
 	center[0] = MAT[1][i]; 
 	center[1] = MAT[2][i]; 
@@ -202,7 +229,7 @@ void plot_cell( std::ostream& os, std::vector<std::vector<double>>& MAT, int i )
 	if( render )
 	{
 		// alt_pigment_and_finish_function( cyto_pigment, nuclear_pigment, finish, MAT, i ); 
-		pigment_and_finish_function( cyto_pigment, nuclear_pigment, finish, MAT, i ); 
+		pigment_and_finish_function( colors, MAT, i ); 
 
 		if( intersect )
 		{
@@ -216,15 +243,21 @@ void plot_cell( std::ostream& os, std::vector<std::vector<double>>& MAT, int i )
 					<< default_POV_options.clipping_planes[i].coefficients[1] << "," 
 					<< default_POV_options.clipping_planes[i].coefficients[2] << ">, " 
 					<< default_POV_options.clipping_planes[i].coefficients[3] << std::endl 
-					<< " pigment {color rgbf<" << cyto_pigment[0] << "," << cyto_pigment[1] << "," << cyto_pigment[2] << "," << cyto_pigment[3] << ">}" << std::endl
-					<< " finish {ambient " << finish[0] << " diffuse " << finish[1] << " specular " << finish[2] << "} }" << std::endl;
+					<< " pigment {color rgbf<" 
+						<< colors.cyto_pigment[0] << "," 
+						<< colors.cyto_pigment[1] << "," 
+						<< colors.cyto_pigment[2] << "," 
+						<< colors.cyto_pigment[3] << ">}" << std::endl
+					<< " finish {ambient " << colors.finish[0] 
+					<< " diffuse " << colors.finish[1] 
+					<< " specular " << colors.finish[2] << "} }" << std::endl;
 			}
 			
 			// if( intersection_indices.size() > 1 )
 			{ os << "}" << std::endl; }
 		}
 		
-		Write_POV_sphere( os, center, radius, cyto_pigment, finish ); 
+		Write_POV_sphere( os, center, radius, colors.cyto_pigment, colors.finish ); 
 	}
 
 	if( intersect )
@@ -281,15 +314,21 @@ void plot_cell( std::ostream& os, std::vector<std::vector<double>>& MAT, int i )
 					<< default_POV_options.clipping_planes[i].coefficients[1] << "," 
 					<< default_POV_options.clipping_planes[i].coefficients[2] << ">, " 
 					<< default_POV_options.clipping_planes[i].coefficients[3]+nuclear_offset << std::endl 
-					<< " pigment {color rgbf<" << nuclear_pigment[0] << "," << nuclear_pigment[1] << "," << nuclear_pigment[2] << "," << nuclear_pigment[3] << ">}" << std::endl
-					<< " finish {ambient " << finish[0] << " diffuse " << finish[1] << " specular " << finish[2] << "} }" << std::endl;
+					<< " pigment {color rgbf<" 
+						<< colors.nuclear_pigment[0] << "," 
+						<< colors.nuclear_pigment[1] << "," 
+						<< colors.nuclear_pigment[2] << "," 
+						<< colors.nuclear_pigment[3] << ">}" << std::endl
+					<< " finish {ambient " << colors.finish[0] 
+					<< " diffuse " << colors.finish[1] 
+					<< " specular " << colors.finish[2] << "} }" << std::endl;
 			}
 			
 			// if( intersection_indices.size() > 1 )
 			{ os << "}" << std::endl; }
 		}
 		default_POV_options.no_shadow = true; 
-		Write_POV_sphere( os, center, radius, nuclear_pigment, finish ); 
+		Write_POV_sphere( os, center, radius, colors.nuclear_pigment, colors.finish ); 
 		default_POV_options.no_shadow = false; 
 	}
 
@@ -316,32 +355,28 @@ void plot_all_cells( std::ostream& os , std::vector<std::vector<double>>& MAT )
 	return; 
 }
 
-void pigment_and_finish_function( std::vector<double>& cyto_pigment, 
-	std::vector<double>& nuclear_pigment, 
-	std::vector<double>& finish, 
-	std::vector<std::vector<double>>& MAT, int i )
+void cancer_immune_pigment_and_finish_function( cell_colorset& colors, std::vector<std::vector<double>>& MAT, int i ) 
 {
-	finish[0] = 0.025; 
-	finish[1] = 1; 
-	finish[2] = 0.1; 
+	// first, some housekeeping
+	static int type_index = 5; //column that stores cell type (integer)
+	static int cycle_model_index = 6; // column that stores which cycle (or death) model (integer) 
+	static int data_index = 27; // 
 	
-	// if this is an immune cell, make it green
-	if( (int) MAT[5][i] == 1 )
+	colors.finish = { 0.025 , 1 , 0.1 }; 
+	
+	// if this is an immune cell, make it red
+	if( (int) MAT[type_index][i] == 1 )
 	{
-		cyto_pigment[0] = 1.0; // 0; 
-		cyto_pigment[1] = 0.0; // 1.0; 
-		cyto_pigment[2] = 0; 
+		colors.cyto_pigment = {1.0, 0.0, 0.0 , 0.0};  
+		colors.nuclear_pigment = {0,0.125,0.0 , 0.0};  
 		
-		nuclear_pigment[0] = 0; 
-		nuclear_pigment[1] = 0.125; 
-		nuclear_pigment[2] = 0; 
 		return; 
 	}
 	
 	bool necrotic = false; 
 	bool apoptotic = false; 
 	bool live = true; 
-	int cycle_model = (int) round( MAT[6][i] ); 
+	int cycle_model = (int) round( MAT[cycle_model_index][i] ); 
 	if( cycle_model == 100 )
 	{
 		apoptotic = true;
@@ -356,7 +391,7 @@ void pigment_and_finish_function( std::vector<double>& cyto_pigment,
 	// live cells are green, but shaded by oncoprotein value 
 	if( live == true )
 	{
-		double oncoprotein = MAT[27][i]; // 0.5 * MAT[27][i];  
+		double oncoprotein = MAT[data_index][i]; // 0.5 * MAT[27][i];  
 		
 		// map [0.5 1.5] to [0 1]
 		if( oncoprotein > 1.5 )
@@ -365,13 +400,13 @@ void pigment_and_finish_function( std::vector<double>& cyto_pigment,
 		{ oncoprotein = 0.5; } 
 		oncoprotein -= 0.5; 
 		
-		cyto_pigment[0] = oncoprotein;
-		cyto_pigment[1] = oncoprotein; 
-		cyto_pigment[2] = 1.0 - oncoprotein;
+		colors.cyto_pigment[0] = oncoprotein;
+		colors.cyto_pigment[1] = oncoprotein; 
+		colors.cyto_pigment[2] = 1.0 - oncoprotein;
 		
-		nuclear_pigment[0] = cyto_pigment[0] * 0.125; 
-		nuclear_pigment[1] = cyto_pigment[1] * 0.125; 
-		nuclear_pigment[2] = cyto_pigment[2] * 0.125; 
+		colors.nuclear_pigment[0] = colors.cyto_pigment[0] * 0.125; 
+		colors.nuclear_pigment[1] = colors.cyto_pigment[1] * 0.125; 
+		colors.nuclear_pigment[2] = colors.cyto_pigment[2] * 0.125; 
 		
 		//	sprintf( szTempString , "rgb(%u,%u,%u)", (int)round(output[0][0]/2.0) , (int)round(output[0][1]/2.0) , (int)round(output[0][2]/2.0) );
 		return; 
@@ -381,14 +416,9 @@ void pigment_and_finish_function( std::vector<double>& cyto_pigment,
 	
 	if( apoptotic )
 	{
-		cyto_pigment[0] = 0; // 1; 
-		cyto_pigment[1] = 1; // 0; 
-		cyto_pigment[2] = 1; // 0; 
-		
-		nuclear_pigment[0] = cyto_pigment[0] * 0.125; 
-		nuclear_pigment[1] = cyto_pigment[1] * 0.125; 
-		nuclear_pigment[2] = cyto_pigment[2] * 0.125; 
-		// output[2] = "rgb(125,0,0)";
+		colors.cyto_pigment = {0,1,1 , 0.0};  
+		colors.nuclear_pigment = {0,0.125,0.125 , 0.0};  
+	
 		return; 
 	}
 	
@@ -396,52 +426,41 @@ void pigment_and_finish_function( std::vector<double>& cyto_pigment,
 	
 	if( necrotic )
 	{
-		finish[0] = 0.01; 
-		finish[1] = 0.5; 
-		finish[2] = 0.1; 		
+		colors.finish = {0.01,0.5,0.1}; 
+		colors.cyto_pigment = {1,0.5412,0.1490, 0.0}; 
+		colors.nuclear_pigment = {0.125,0.06765,0.018625, 0.0};  
 		
-		cyto_pigment[0] = 1; 
-		cyto_pigment[1] = 0.5412;
-		cyto_pigment[2] = 0.1490;
-
-		nuclear_pigment[0] = cyto_pigment[0] * 0.125; 
-		nuclear_pigment[1] = cyto_pigment[1] * 0.125; 
-		nuclear_pigment[2] = cyto_pigment[2] * 0.125; 
 		return; 
 	}
 	
 	return; 
 }
 
-
-
-void alt_pigment_and_finish_function( 
-	std::vector<double>& cyto_pigment, 
-	std::vector<double>& nuclear_pigment, 
-	std::vector<double>& finish, 
-	std::vector<std::vector<double>>& MAT, int i )
+void standard_pigment_and_finish_function( cell_colorset& colors, std::vector<std::vector<double>>& MAT, int i ) 
 {
-	finish[0] = 0.025; 
-	finish[1] = 1; 
-	finish[2] = 0.1; 
+	// first, some housekeeping
+	static int type_index = 5; //column that stores cell type (integer)
+	static int cycle_model_index = 6; // column that stores which cycle (or death) model (integer) 
 	
-	// if this is an immune cell, make it green
-	if( (int) MAT[5][i] == 1 )
+	// Search the (global) array of colors 
+	// for the cell's type. If it's not found,
+	// default to 0. 
+	
+	int color_index = 0; 
+	int cell_type = (int) MAT[type_index][i]; 
+	for( int j=0; j < cell_color_definitions.size(); j++ )
 	{
-		cyto_pigment[0] = 0; 
-		cyto_pigment[1] = 1.0; 
-		cyto_pigment[2] = 0; 
-		
-		nuclear_pigment[0] = 0; 
-		nuclear_pigment[1] = 0.125; 
-		nuclear_pigment[2] = 0; 
-		return; 
+		if( cell_type == cell_color_definitions[j].type )
+		{ color_index = j; }
 	}
+	
+	// next, see if it's live, apoptotic, or necrotic 
 	
 	bool necrotic = false; 
 	bool apoptotic = false; 
 	bool live = true; 
-	int cycle_model = (int) round( MAT[6][i] ); 
+	int cycle_model = (int) round( MAT[cycle_model_index][i] ); 
+	
 	if( cycle_model == 100 )
 	{
 		apoptotic = true;
@@ -453,88 +472,49 @@ void alt_pigment_and_finish_function(
 		live = false;
 	}		
 
-	// live cells are green, but shaded by oncoprotein value 
+	// cell is live. use the appropriate colors 
 	if( live == true )
 	{
-		double oncoprotein = MAT[27][i];  
-		// map [0.5 1.5] to [0 1]
-		if( oncoprotein > 1.5 )
-		{ oncoprotein = 1.5; }
-		if( oncoprotein < 0.5 )
-		{ oncoprotein = 0.5; } 
-		oncoprotein -= 0.5; 
-		
-		cyto_pigment[0] = oncoprotein;
-		cyto_pigment[1] = 0; 
-		cyto_pigment[2] = 1.0 - oncoprotein;
-		
-		nuclear_pigment[0] = cyto_pigment[0] * 0.125; 
-		nuclear_pigment[1] = cyto_pigment[1] * 0.125; 
-		nuclear_pigment[2] = cyto_pigment[2] * 0.125; 
-		
-		//	sprintf( szTempString , "rgb(%u,%u,%u)", (int)round(output[0][0]/2.0) , (int)round(output[0][1]/2.0) , (int)round(output[0][2]/2.0) );
-		return; 
-	}	
-	
-	// apoptotic cells
-	
-	if( apoptotic )
-	{
-		cyto_pigment[0] = 0; 
-		cyto_pigment[1] = 1;
-		cyto_pigment[2] = 1; 
-		
-		nuclear_pigment[0] = cyto_pigment[0] * 0.125; 
-		nuclear_pigment[1] = cyto_pigment[1] * 0.125; 
-		nuclear_pigment[2] = cyto_pigment[2] * 0.125; 
-		// output[2] = "rgb(125,0,0)";
+		colors = cell_color_definitions[color_index].live; 
 		return; 
 	}
 	
-	// necrotic cells 
-	
-	if( necrotic )
+	if( apoptotic == true )
 	{
-		finish[0] = 0.01; 
-		finish[1] = 0.5; 
-		finish[2] = 0.1; 		
+		colors= cell_color_definitions[color_index].apoptotic; 
+		return; 
+	}
 		
-		cyto_pigment[0] = 1; 
-		cyto_pigment[1] = 0.5412;
-		cyto_pigment[2] = 0.1490;
+	if( necrotic == true )
+	{
+		colors= cell_color_definitions[color_index].necrotic; 
+		return; 
+	}
+		
+	return; 
+}
 
-		nuclear_pigment[0] = cyto_pigment[0] * 0.125; 
-		nuclear_pigment[1] = cyto_pigment[1] * 0.125; 
-		nuclear_pigment[2] = cyto_pigment[2] * 0.125; 
-		return; 
-	}
+cell_colorset::cell_colorset( )
+{
+	cyto_pigment = {1,1,1,0}; 
+	nuclear_pigment = {.125,.125,.125,0};
+	
+	finish = {0.05,1,0.1};
+	
+	return; 
+}
+
+cell_colors::cell_colors( )
+{
+	type = 0; 
+	return; 
+}
+
+void setup_cell_color_definitions( void )
+{
+	cell_color_definitions.resize( 1 ); 
 	
 	return; 
 }
 
 
-/*
-	static int oncoprotein_i = pCell->custom_data.find_variable_index( "oncoprotein" ); 
-	
- 
- 
-
-	// if not, dead colors 
-	
-	if (pCell->phenotype.cycle.current_phase().code == PhysiCell_constants::apoptotic )  // Apoptotic - Red
-	{
-		output[0] = "rgb(255,0,0)";
-		output[2] = "rgb(125,0,0)";
-	}
-	
-	// Necrotic - Brown
-	if( pCell->phenotype.cycle.current_phase().code == PhysiCell_constants::necrotic_swelling || 
-		pCell->phenotype.cycle.current_phase().code == PhysiCell_constants::necrotic_lysed || 
-		pCell->phenotype.cycle.current_phase().code == PhysiCell_constants::necrotic )
-	{
-		output[0] = "rgb(250,138,38)";
-		output[2] = "rgb(139,69,19)";
-	}	
-	
-	return output; 
-*/
