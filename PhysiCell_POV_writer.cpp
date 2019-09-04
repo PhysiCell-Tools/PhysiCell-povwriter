@@ -92,6 +92,13 @@ class Options
 	std::string filename; 
 	int time_index; 
 	
+	double camera_distance; 
+	double camera_theta;
+	double camera_phi; 
+	
+	double nuclear_offset;
+	double cell_bound; 
+	
 	Options(); 
 };
 
@@ -151,10 +158,8 @@ int main( int argc, char* argv[] )
 	std::cout << "Matrix size: " << MAT.size() << " x " << MAT[0].size() << std::endl; 
 	
 	// set options 
-
-	double pi = 3.141592653589793;
 	
-	default_POV_options.set_camera_from_spherical_location( 1500, 5*pi/4.0 , pi/3.0 ); // do
+	default_POV_options.set_camera_from_spherical_location( options.camera_distance , options.camera_theta, options.camera_phi ); //  1500, 5*pi/4.0 , pi/3.0 ); // do
 	default_POV_options.light_position[0] *= 0.5; 
 	
 	// start output 
@@ -285,7 +290,7 @@ void plot_cell( std::ostream& os, std::vector<std::vector<double>>& MAT, int i )
 	// offset the nuclear clipping just tiny bit, to avoid 
 	// graphical artifacts where the cytoplasm and nucleus 
 	// blend into each other 
-	double nuclear_offset = 0.1; 
+	static double nuclear_offset = options.nuclear_offset; 
 	
 	for( int i=0; i < default_POV_options.clipping_planes.size() ; i++ )
 	{
@@ -345,7 +350,7 @@ void plot_cell( std::ostream& os, std::vector<std::vector<double>>& MAT, int i )
 
 void plot_all_cells( std::ostream& os , std::vector<std::vector<double>>& MAT )
 {
-	double bound = 750.0; 
+	static double bound = options.cell_bound;  
 	
 	for( int i = 0 ; i < MAT[0].size() ; i++ )
 	{
@@ -566,7 +571,9 @@ bool load_config_file( std::string filename )
 		std::cout << "\tUsing user-defined coloring in my_pigment_and_finish_function ... " << std::endl; 
 		pigment_and_finish_function = my_pigment_and_finish_function; 		
 	}
-	
+	options.nuclear_offset = xml_get_double_value( node, "nuclear_offset" ); 
+	options.cell_bound = xml_get_double_value( node, "cell_bound" ); 
+		
 	// now, set clipping planes 
 	
 	node = xml_find_node( config_root , "clipping_planes" ); 
@@ -642,13 +649,18 @@ bool load_config_file( std::string filename )
 		temp = xml_get_string_value( node, "finish" ); 
 		csv_to_vector( temp.c_str() , cell_color_definitions[i].necrotic.finish ); 
 		node = node.parent(); 
-
-
 		
 		node1 = node1.next_sibling(); 
 		i++; 
 	}
 	std::cout << "Found " << cell_color_definitions.size()  << " cell color definitions ... " << std::endl; 
+	
+	// set up camera 
+	
+	node = xml_find_node( config_root , "camera" );
+	options.camera_distance = xml_get_double_value( node, "distance_from_origin" ); 
+	options.camera_theta = xml_get_double_value( node, "xy_angle" ); 
+	options.camera_phi = xml_get_double_value( node, "yz_angle" ); 
 	
 	return true; 	
 }
@@ -659,6 +671,16 @@ Options::Options()
 	filebase = "output"; 
 	time_index = 3696; 
 	filename = "./sample/output0003696_physicell_cells.mat" ; 
+
+	double pi = 3.141592653589793;
+
+	camera_distance = 1500; 
+	camera_theta = 5*pi/4; 
+	camera_phi = pi/3; 
+	
+	nuclear_offset = 0.1; 
+	
+	cell_bound = 750; 
 	
 	return; 
 }
