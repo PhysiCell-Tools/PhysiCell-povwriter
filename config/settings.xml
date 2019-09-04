@@ -1,17 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<pov_settings>
+<povwriter_settings>
 
 	<camera>
 	</camera>
 
-	<options>
+	<options> <!-- done -->
 		<use_standard_colors>true</use_standard_colors>
 	</options>
 
-	<save>
+	<save> <!-- done --> 
 		<folder>sample</folder> <!-- use . for root --> 
+		<filebase>output</filebase> 
+		<time_index>3696</time_index> 
 	</save>
+	
+	<clipping_planes> <!-- done --> 
+		<clipping_plane>0,-1,0,0</clipping_plane>
+		<clipping_plane>-1,0,0,0</clipping_plane>
+		<clipping_plane>0,0,1,0</clipping_plane>
+	</clipping_planes>
 	
 	<!-- if using standard coloring (above), these will be used --> 
 	<!-- otherwise, the code will look for a user-defined color/finish function --> 
@@ -34,7 +42,7 @@
 				<nuclear>0.125,0.06765,0.018625</nuclear>
 				<finish>0.01,0.5,0.1</finish> <!-- ambient,diffuse,specular -->
 			</necrotic>
-		</cell_type>
+		</cell_colors>
 		
 		<cell_colors type="1">
 			<live>
@@ -56,7 +64,4 @@
 	
 	</cell_color_definitions>
 
-
-
-
-<pov_settings>
+</povwriter_settings>

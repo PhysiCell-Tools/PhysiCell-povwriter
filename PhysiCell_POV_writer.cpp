@@ -73,40 +73,62 @@
 #include <string>
 
 #include "./modules/PhysiCell_POV.h"
+#include "./modules/PhysiCell_pugixml.h"
 #include "./BioFVM/BioFVM_matlab.h" 
+#include "./BioFVM/BioFVM_vector.h" 
 
 using namespace BioFVM; 
+using namespace PhysiCell; 
 
-class cell_colorset
+bool config_dom_initialized = false; 
+pugi::xml_document config_doc; 	
+pugi::xml_node config_root; 
+
+class Options
+{
+ public:
+	std::string folder; 
+	std::string filebase; 
+	std::string filename; 
+	int time_index; 
+	
+	Options(); 
+};
+
+Options options; 
+
+class Cell_Colorset
 {
  public:
 	std::vector<double> cyto_pigment; 
 	std::vector<double> nuclear_pigment; 
 	std::vector<double> finish; 
 	
-	cell_colorset(); 
+	Cell_Colorset(); 
 }; 
 
-class cell_colors
+class Cell_Colors
 {
  public:
 	int type; 
-	cell_colorset live; 
-	cell_colorset apoptotic; 
-	cell_colorset necrotic; 
+	Cell_Colorset live; 
+	Cell_Colorset apoptotic; 
+	Cell_Colorset necrotic; 
 	
-	cell_colors(); 
+	Cell_Colors(); 
 };
 
-std::vector<cell_colors> cell_color_definitions; 
+std::vector<Cell_Colors> cell_color_definitions; 
+
+bool load_config_file( std::string filename ); 
 
 void setup_cell_color_definitions( void ); 
 
-void (*pigment_and_finish_function)(cell_colorset&,std::vector<std::vector<double>>&,int); 
+void (*pigment_and_finish_function)(Cell_Colorset&,std::vector<std::vector<double>>&,int); 
 	
-void cancer_immune_pigment_and_finish_function( cell_colorset& colors, std::vector<std::vector<double>>& MAT, int i ); 
-
-void standard_pigment_and_finish_function( cell_colorset& colors, std::vector<std::vector<double>>& MAT, int i );  
+void cancer_immune_pigment_and_finish_function( Cell_Colorset& colors, std::vector<std::vector<double>>& MAT, int i ); 
+void standard_pigment_and_finish_function( Cell_Colorset& colors, std::vector<std::vector<double>>& MAT, int i );  
+void my_pigment_and_finish_function( Cell_Colorset& colors, std::vector<std::vector<double>>& MAT, int i ); 
 
 void plot_cell( std::ostream& os, std::vector<std::vector<double>>& MAT, int i );
 
@@ -114,15 +136,22 @@ void plot_all_cells( std::ostream& os , std::vector<std::vector<double>>& MAT );
 
 int main( int argc, char* argv[] )
 {
-	char temp [1024]; 
-	sprintf( temp , "./cancer_immune_3D/output%08i_cells_physicell.mat" , atoi( argv[1] ) );
-	std::cout << "Processing file " << temp << "... " << std::endl; 
-
-	// read the matrix 
-	std::string filename = temp; 
-	std::vector< std::vector<double> > MAT = read_matlab( filename );
-	std::cout << MAT.size() << " x " << MAT[0].size() << std::endl; 
+	// load and parse settings file(s)
 	
+	bool XML_status = false; 
+	if( argc > 2 )
+	{ XML_status = load_config_file( argv[2] ); }
+	else
+	{ XML_status = load_config_file( "./config/settings.xml" ); }
+	if( !XML_status )
+	{ exit(-1); }
+	
+	// read the matrix 
+	std::vector< std::vector<double> > MAT = read_matlab( options.filename.c_str() );
+	std::cout << "Matrix size: " << MAT.size() << " x " << MAT[0].size() << std::endl; 
+	
+	return -2; 
+
 	// set options 
 	
 	pigment_and_finish_function = cancer_immune_pigment_and_finish_function; 
@@ -145,11 +174,13 @@ int main( int argc, char* argv[] )
 
 	
 	// start output 
-	sprintf( temp , "pov%08i.pov" , atoi( argv[1] ) ); 
-	std::ofstream os( temp, std::ios::out ); 
+	char temp [1024]; 
+	sprintf( temp , "pov%08i.pov" , options.time_index ); 
+	options.filename = temp ; 
+	std::ofstream os( options.filename.c_str() , std::ios::out ); 
 	
 	
-	std::cout << "Creating file " << temp << " for output ... " << std::endl; 
+	std::cout << "Creating file " << options.filename << " for output ... " << std::endl; 
 	Write_POV_start( os ); 
 	
 	std::vector<double> pigment = {1,0,0,0}; 
@@ -174,7 +205,7 @@ int main( int argc, char* argv[] )
 void plot_cell( std::ostream& os, std::vector<std::vector<double>>& MAT, int i )
 {
 	// bookkeeping 
-	static cell_colorset colors; 
+	static Cell_Colorset colors; 
 	static bool setup_done = false; 
 	if( setup_done == false )
 	{
@@ -355,7 +386,7 @@ void plot_all_cells( std::ostream& os , std::vector<std::vector<double>>& MAT )
 	return; 
 }
 
-void cancer_immune_pigment_and_finish_function( cell_colorset& colors, std::vector<std::vector<double>>& MAT, int i ) 
+void cancer_immune_pigment_and_finish_function( Cell_Colorset& colors, std::vector<std::vector<double>>& MAT, int i ) 
 {
 	// first, some housekeeping
 	static int type_index = 5; //column that stores cell type (integer)
@@ -436,7 +467,7 @@ void cancer_immune_pigment_and_finish_function( cell_colorset& colors, std::vect
 	return; 
 }
 
-void standard_pigment_and_finish_function( cell_colorset& colors, std::vector<std::vector<double>>& MAT, int i ) 
+void standard_pigment_and_finish_function( Cell_Colorset& colors, std::vector<std::vector<double>>& MAT, int i ) 
 {
 	// first, some housekeeping
 	static int type_index = 5; //column that stores cell type (integer)
@@ -494,7 +525,7 @@ void standard_pigment_and_finish_function( cell_colorset& colors, std::vector<st
 	return; 
 }
 
-cell_colorset::cell_colorset( )
+Cell_Colorset::Cell_Colorset( )
 {
 	cyto_pigment = {1,1,1,0}; 
 	nuclear_pigment = {.125,.125,.125,0};
@@ -504,7 +535,7 @@ cell_colorset::cell_colorset( )
 	return; 
 }
 
-cell_colors::cell_colors( )
+Cell_Colors::Cell_Colors( )
 {
 	type = 0; 
 	return; 
@@ -514,6 +545,211 @@ void setup_cell_color_definitions( void )
 {
 	cell_color_definitions.resize( 1 ); 
 	
+	return; 
+}
+
+	
+bool load_config_file( std::string filename )
+{
+	std::cout << "Using config file " << filename << " ... " << std::endl ; 
+	pugi::xml_parse_result result = config_doc.load_file( filename.c_str()  );
+	
+	if( result.status != pugi::xml_parse_status::status_ok )
+	{
+		std::cout << "Error loading " << filename << "!" << std::endl; 
+		return false;
+	}
+	
+	config_root = config_doc.child("povwriter_settings");
+	config_dom_initialized = true; 
+	
+	pugi::xml_node node; 
+	
+	// figure out filenames, etc. 
+	
+	node = xml_find_node( config_root , "save" );
+	
+	options.folder = xml_get_string_value( node, "folder" ) ;
+	options.filebase = xml_get_string_value( node, "filebase" ) ;
+	options.time_index = xml_get_int_value( node, "time_index" ) ; 
+	
+	char temp [1024]; 
+	sprintf( temp , "./%s/%s%08i_cells_physicell.mat" , options.folder.c_str(), options.filebase.c_str() , options.time_index );
+	options.filename = temp; 
+
+	std::cout << "Processing file " << options.filename << "... " << std::endl; 
+	
+	// decide which function to use 
+	
+	node = xml_find_node( config_root , "options" ); 
+	if( xml_get_bool_value( node , "use_standard_colors" ) == true )
+	{
+		std::cout << "\tUsing standard coloring function ... "<< std::endl; 
+		pigment_and_finish_function = standard_pigment_and_finish_function; 
+	}
+	else
+	{
+		std::cout << "\tUsing user-defined coloring in my_pigment_and_finish_function ... " << std::endl; 
+		pigment_and_finish_function = my_pigment_and_finish_function; 		
+	}
+	
+	// now, set clipping planes 
+	
+	node = xml_find_node( config_root , "clipping_planes" ); 
+	
+	int i = 0; 
+	Clipping_Plane cp; 
+	
+	pugi::xml_node node1 = node.first_child(); 
+	while( node1 )
+	{
+		// get the CSV 
+		std::string temp = xml_get_my_string_value( node1 ) ;
+		
+		// convert to a vector 
+		csv_to_vector( temp.c_str() , cp.coefficients ); 
+		
+		// add the clipping plane 
+		default_POV_options.clipping_planes.push_back( cp ); 
+		
+		// find teh next clipping plane 
+		node1 = node1.next_sibling(); 
+		i++; 
+	}
+	std::cout << "Found " << i << " clipping planes ... " << std::endl; 
+	
+	return false; 
+
+	// set options 
+	
+
+	return false; 
+	
+	
+	
+	cp.coefficients = {0,-1,0,0};
+	default_POV_options.clipping_planes.push_back( cp ); 
+
+	cp.coefficients = {-1,0,0,0};
+	default_POV_options.clipping_planes.push_back( cp ); 
+
+	cp.coefficients = {0,0,1,0};
+	default_POV_options.clipping_planes.push_back( cp ); 
+
+
+
+
+/*
+	max_time = xml_get_double_value( node , "max_time" );
+	time_units = xml_get_string_value( node, "time_units" ) ;
+	space_units = xml_get_string_value( node, "space_units" ) ;
+
+	node = node.parent(); 
+	
+	// save options 
+	
+	node = xml_find_node( physicell_config_root , "save" ); 
+	
+	folder = xml_get_string_value( node, "folder" ) ;
+	
+	node = xml_find_node( node , "full_data" ); 
+	full_save_interval = xml_get_double_value( node , "interval" );
+	enable_full_saves = xml_get_bool_value( node , "enable" ); 
+	node = node.parent(); 
+	
+	node = xml_find_node( node , "SVG" ); 
+	SVG_save_interval = xml_get_double_value( node , "interval" );
+	enable_SVG_saves = xml_get_bool_value( node , "enable" ); 
+	node = node.parent(); 
+	
+	node = xml_find_node( node , "legacy_data" ); 
+	enable_legacy_saves = xml_get_bool_value( node , "enable" );
+	node = node.parent(); 
+
+	
+
+	
+	
+	char temp [1024]; 
+	sprintf( temp , "./cancer_immune_3D/output%08i_cells_physicell.mat" , atoi( argv[1] ) );
+	std::cout << "Processing file " << temp << "... " << std::endl; 
+
+	// read the matrix 
+	std::string filename = temp; 
+
+
+	
+	
+	options.filename = temp; 
+	
+	// read camera options 
+
+
+	// set options 
+	
+	pigment_and_finish_function = cancer_immune_pigment_and_finish_function; 
+	
+	Clipping_Plane cp; 
+
+	cp.coefficients = {0,-1,0,0};
+	default_POV_options.clipping_planes.push_back( cp ); 
+
+	cp.coefficients = {-1,0,0,0};
+	default_POV_options.clipping_planes.push_back( cp ); 
+
+	cp.coefficients = {0,0,1,0};
+	default_POV_options.clipping_planes.push_back( cp ); 
+	
+	double pi = 3.141592653589793;
+	
+	default_POV_options.set_camera_from_spherical_location( 1500, 5*pi/4.0 , pi/3.0 ); // do
+	default_POV_options.light_position[0] *= 0.5; 
+
+
+
+	pigment_and_finish_function = cancer_immune_pigment_and_finish_function; 
+*/
+
+	
+	// read other options 
+	
+	// get save directory 
+	
+	
+/*	
+	PhysiCell_settings.read_from_pugixml(); 
+	
+	// now read the microenvironment (optional) 
+	
+	if( !setup_microenvironment_from_XML( physicell_config_root ) )
+	{
+		std::cout << std::endl 
+				  << "Warning: microenvironment_setup not found in " << filename << std::endl 
+				  << "         Either manually setup microenvironment in setup_microenvironment() (custom.cpp)" << std::endl
+				  << "         or consult documentation to add microenvironment_setup to your configuration file." << std::endl << std::endl; 
+	}
+	
+	// now read user parameters
+	
+	parameters.read_from_pugixml( physicell_config_root ); 
+*/ 	
+	
+	return true; 	
+}
+
+Options::Options()
+{
+	folder = "sample"; 
+	filebase = "output"; 
+	time_index = 3696; 
+	filename = "./sample/output0003696_physicell_cells.mat" ; 
+	
+	return; 
+}
+
+void my_pigment_and_finish_function( Cell_Colorset& colors, std::vector<std::vector<double>>& MAT, int i )
+{
+	cancer_immune_pigment_and_finish_function(colors,MAT,i); 
 	return; 
 }
 
