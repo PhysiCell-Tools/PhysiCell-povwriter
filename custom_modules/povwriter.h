@@ -72,51 +72,71 @@
 #include <iostream>
 #include <string>
 
-#include "./modules/PhysiCell_POV.h"
-#include "./modules/PhysiCell_pugixml.h"
-#include "./BioFVM/BioFVM_matlab.h" 
-#include "./BioFVM/BioFVM_vector.h" 
+#include "../modules/PhysiCell_POV.h"
+#include "../modules/PhysiCell_pugixml.h"
+#include "../BioFVM/BioFVM_matlab.h" 
+#include "../BioFVM/BioFVM_vector.h" 
 
-#include "./custom_modules/povwriter.h" 
+using namespace BioFVM; 
+using namespace PhysiCell; 
 
-int main( int argc, char* argv[] )
+extern bool config_dom_initialized; 
+extern pugi::xml_document config_doc; 	
+extern pugi::xml_node config_root; 
+
+class Options
 {
-	// load and parse settings file(s)
+ public:
+	std::string folder; 
+	std::string filebase; 
+	std::string filename; 
+	int time_index; 
 	
-	bool XML_status = false; 
-	if( argc > 2 )
-	{ XML_status = load_config_file( argv[2] ); }
-	else
-	{ XML_status = load_config_file( "./config/settings.xml" ); }
-	if( !XML_status )
-	{ exit(-1); }
+	double camera_distance; 
+	double camera_theta;
+	double camera_phi; 
 	
-	// read the matrix 
-	std::vector< std::vector<double> > MAT = read_matlab( options.filename.c_str() );
-	std::cout << "Matrix size: " << MAT.size() << " x " << MAT[0].size() << std::endl; 
+	double nuclear_offset;
+	double cell_bound; 
 	
-	// set options 
+	Options(); 
+};
+
+extern Options options; 
+
+class Cell_Colorset
+{
+ public:
+	std::vector<double> cyto_pigment; 
+	std::vector<double> nuclear_pigment; 
+	std::vector<double> finish; 
 	
-	default_POV_options.set_camera_from_spherical_location( options.camera_distance , options.camera_theta, options.camera_phi ); //  1500, 5*pi/4.0 , pi/3.0 ); // do
-	default_POV_options.light_position[0] *= 0.5; 
+	Cell_Colorset(); 
+}; 
+
+class Cell_Colors
+{
+ public:
+	int type; 
+	Cell_Colorset live; 
+	Cell_Colorset apoptotic; 
+	Cell_Colorset necrotic; 
 	
-	// start output 
-	char temp [1024]; 
-	sprintf( temp , "pov%08i.pov" , options.time_index ); 
-	options.filename = temp ; 
-	std::ofstream os( options.filename.c_str() , std::ios::out ); 
+	Cell_Colors(); 
+};
+
+extern std::vector<Cell_Colors> cell_color_definitions; 
+
+bool load_config_file( std::string filename ); 
+void setup_cell_color_definitions( void ); 
+
+extern void (*pigment_and_finish_function)(Cell_Colorset&,std::vector<std::vector<double>>&,int); 
 	
-	std::cout << "Creating file " << options.filename << " for output ... " << std::endl; 
-	Write_POV_start( os ); 
-	
-	// now, place the cells	
-	std::cout << "Writing " << MAT[0].size() << " cells ... " <<std::endl; 
-	
-	plot_all_cells(os,MAT);
-	os.close(); 
-	
-	std::cout << "done!" << std::endl; 
-	
-	return 0;
-}
+void cancer_immune_pigment_and_finish_function( Cell_Colorset& colors, std::vector<std::vector<double>>& MAT, int i ); 
+void standard_pigment_and_finish_function( Cell_Colorset& colors, std::vector<std::vector<double>>& MAT, int i );  
+void my_pigment_and_finish_function( Cell_Colorset& colors, std::vector<std::vector<double>>& MAT, int i ); 
+
+void plot_cell( std::ostream& os, std::vector<std::vector<double>>& MAT, int i );
+
+void plot_all_cells( std::ostream& os , std::vector<std::vector<double>>& MAT );
 

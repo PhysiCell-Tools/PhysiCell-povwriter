@@ -43,7 +43,7 @@ PhysiCell_module_OBJECTS := PhysiCell_POV.o PhysiCell_pugixml.o
 
 # put your custom objects here (they should be in the custom_modules directory)
 
-PhysiCell_custom_module_OBJECTS := 
+PhysiCell_custom_module_OBJECTS := povwriter.o 
 
 pugixml_OBJECTS := pugixml.o
 
@@ -75,6 +75,9 @@ PhysiCell_pugixml.o: ./modules/PhysiCell_pugixml.cpp
 	$(COMPILE_COMMAND) -c ./modules/PhysiCell_pugixml.cpp
 	
 # user-defined PhysiCell modules
+
+povwriter.o: ./custom_modules/povwriter.cpp
+	$(COMPILE_COMMAND) -c ./custom_modules/povwriter.cpp
 
 # cleanup
 
