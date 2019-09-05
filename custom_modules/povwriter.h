@@ -71,6 +71,7 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <cstring>
 
 #include "../modules/PhysiCell_POV.h"
 #include "../modules/PhysiCell_pugixml.h"
@@ -83,6 +84,8 @@ using namespace PhysiCell;
 extern bool config_dom_initialized; 
 extern pugi::xml_document config_doc; 	
 extern pugi::xml_node config_root; 
+
+extern std::string VERSION; 
 
 class Options
 {
@@ -139,4 +142,9 @@ void my_pigment_and_finish_function( Cell_Colorset& colors, std::vector<std::vec
 void plot_cell( std::ostream& os, std::vector<std::vector<double>>& MAT, int i );
 
 void plot_all_cells( std::ostream& os , std::vector<std::vector<double>>& MAT );
+
+void display_splash( std::ostream& os ); 
+
+bool is_xml( std::string filename ); 
+bool is_xml( char* filename ); 
 

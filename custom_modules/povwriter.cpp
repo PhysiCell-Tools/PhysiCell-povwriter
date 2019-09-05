@@ -78,6 +78,8 @@ std::vector<Cell_Colors> cell_color_definitions;
 
 void (*pigment_and_finish_function)(Cell_Colorset&,std::vector<std::vector<double>>&,int); 
 
+std::string VERSION = "1.0.0"; 
+
 void plot_cell( std::ostream& os, std::vector<std::vector<double>>& MAT, int i )
 {
 	// bookkeeping 
@@ -587,6 +589,27 @@ void my_pigment_and_finish_function( Cell_Colorset& colors, std::vector<std::vec
 	return; 
 }
 
+void display_splash( std::ostream& os )
+{
+	os << "povwriter version " << VERSION << std::endl << std::endl; 
 
+
+	return; 
+}
+
+bool is_xml( std::string filename )
+{
+	if( strstr( filename.c_str() , ".xml" ) )
+	{ return true; }
+	return false;
+}
+
+
+bool is_xml( char* filename )
+{
+	if( strstr( filename, ".xml" ) )
+	{ return true; }
+	return false;
+}
 
 

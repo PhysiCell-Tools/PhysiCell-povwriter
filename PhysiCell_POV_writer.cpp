@@ -81,13 +81,26 @@
 
 int main( int argc, char* argv[] )
 {
+	display_splash( std::cout ); 
+	
+	std::string config_file = "./config/settings.xml"; 
+	
 	// load and parse settings file(s)
 	
 	bool XML_status = false; 
-	if( argc > 2 )
-	{ XML_status = load_config_file( argv[2] ); }
-	else
-	{ XML_status = load_config_file( "./config/settings.xml" ); }
+	if( argc > 1 )
+	{
+		if( is_xml(argv[1]) )
+		{
+			config_file = argv[1]; 
+		}
+		else
+		{
+			std::cout << "not an xml file extension" << std::endl; 			
+		}
+	}
+	
+	XML_status = load_config_file( config_file ); 
 	if( !XML_status )
 	{ exit(-1); }
 	
