@@ -72,6 +72,8 @@
 #include <iostream>
 #include <string>
 
+#include <omp.h> 
+
 #include "./modules/PhysiCell_POV.h"
 #include "./modules/PhysiCell_pugixml.h"
 #include "./BioFVM/BioFVM_matlab.h" 
@@ -117,6 +119,8 @@ int main( int argc, char* argv[] )
 
 	// process all the files 
 	
+	omp_set_num_threads(options.threads);
+	#pragma omp parallel for 
 	for( int n =0 ; n < file_indices.size() ; n++ )
 	{	
 		// read the matrix 

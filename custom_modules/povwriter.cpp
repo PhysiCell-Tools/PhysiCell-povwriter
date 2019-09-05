@@ -471,6 +471,7 @@ bool load_config_file( std::string filename )
 	}
 	options.nuclear_offset = xml_get_double_value( node, "nuclear_offset" ); 
 	options.cell_bound = xml_get_double_value( node, "cell_bound" ); 
+	options.threads = xml_get_int_value( node, "threads" ); 
 		
 	// now, set clipping planes 
 	
@@ -579,6 +580,8 @@ Options::Options()
 	nuclear_offset = 0.1; 
 	
 	cell_bound = 750; 
+	
+	threads = 1; 
 	
 	return; 
 }

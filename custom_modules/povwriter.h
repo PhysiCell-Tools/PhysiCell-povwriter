@@ -102,6 +102,8 @@ class Options
 	double nuclear_offset;
 	double cell_bound; 
 	
+	int threads; 
+	
 	Options(); 
 };
 
