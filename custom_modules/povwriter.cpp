@@ -592,6 +592,11 @@ void my_pigment_and_finish_function( Cell_Colorset& colors, std::vector<std::vec
 void display_splash( std::ostream& os )
 {
 	os << "povwriter version " << VERSION << std::endl << std::endl; 
+	
+	os << "Usage: " << std::endl 
+		<< "povwriter \t\t:\t " << "run povwriter with config file ./config/settings.xml" << std::endl << std::endl
+
+		<< "povwriter FILENAME.xml \t:\t " << "run povwriter with config file FILENAME.xml" << std::endl << std::endl;
 
 
 	return; 
