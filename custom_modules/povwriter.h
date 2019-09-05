@@ -149,3 +149,5 @@ bool is_xml( std::string filename );
 bool is_xml( char* filename ); 
 
 std::vector<int> create_index_list( char* input ); 
+std::string create_filename( std::string folder, std::string filebase , int index ); 
+std::string create_filename( int index ); 

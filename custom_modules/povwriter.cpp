@@ -608,6 +608,13 @@ void display_splash( std::ostream& os )
 		<< "               \t\t " << "         ./FOLDER/FILEBASE00000010_physicell_cells.mat" << std::endl 
 		<< "               \t\t " << "(See the config file to set FOLDER and FILEBASE)" << std::endl << std::endl 
 		
+		<< "povwriter x1,...,xn\t: " << "run povwriter on data in FOLDER with indices x1,...,xn " << std::endl << std::endl
+		<< "               \t\t " << "Example: ./povwriter 1,3,17 processes files: " << std::endl 
+		<< "               \t\t " << "         ./FOLDER/FILEBASE00000001_physicell_cells.mat" << std::endl 
+		<< "               \t\t " << "         ./FOLDER/FILEBASE00000003_physicell_cells.mat" << std::endl 
+		<< "               \t\t " << "         ./FOLDER/FILEBASE00000017_physicell_cells.mat" << std::endl 
+		<< "               \t\t " << "(Note that there are no spaces.)" << std::endl 
+		<< "               \t\t " << "(See the config file to set FOLDER and FILEBASE)" << std::endl << std::endl 
 		
 		<< std::endl; 
 
@@ -627,6 +634,24 @@ bool is_xml( char* filename )
 	{ return true; }
 	return false;
 }
+
+std::string create_filename( std::string folder, std::string filebase , int index )
+{
+	std::string output; 
+	
+	char temp [1024]; 
+	sprintf( temp , "./%s/%s%08i_cells_physicell.mat" , folder.c_str(), filebase.c_str() , index );
+	output = temp; 
+	
+	return output; 
+}
+
+std::string create_filename( int index )
+{
+	return create_filename( options.folder, options.filebase , index );
+}
+
+
 
 std::vector<int> create_index_list( char* input )
 {

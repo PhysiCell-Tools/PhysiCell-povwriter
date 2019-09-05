@@ -83,64 +83,68 @@ int main( int argc, char* argv[] )
 {
 	display_splash( std::cout ); 
 	
-	char* my_text = (char*) "0 1 2 17 8"; 
-	
-	std::vector<int> indices = create_index_list( my_text ); 
-	std::cout << "["; 
-	for( int i=0; i < indices.size() ; i++ )
-	{
-		std::cout << indices[i] << " " ; 
-	}
-	
-	std::cout << "]" <<std::endl; 
-	
-	exit(0); 
-	
 	std::string config_file = "./config/settings.xml"; 
 	
+	std::vector<int> file_indices; 
+	
+	// process command-line arguments 
 	bool XML_status = false; 
 	if( argc > 1 )
 	{
 		if( is_xml(argv[1]) )
 		{
-			// 
 			config_file = argv[1]; 
 		}
 		else
 		{
-			std::cout << "not an xml file extension" << std::endl; 			
+			file_indices = create_index_list( argv[1] ); 
 		}
 	}
 	
 	XML_status = load_config_file( config_file ); 
 	if( !XML_status )
 	{ exit(-1); }
-	
-	// read the matrix 
-	std::vector< std::vector<double> > MAT = read_matlab( options.filename.c_str() );
-	std::cout << "Matrix size: " << MAT.size() << " x " << MAT[0].size() << std::endl; 
+
+	if( file_indices.size() == 0 )
+	{
+		file_indices.push_back( options.time_index ); 
+	}
 	
 	// set options 
 	
 	default_POV_options.set_camera_from_spherical_location( options.camera_distance , options.camera_theta, options.camera_phi ); //  1500, 5*pi/4.0 , pi/3.0 ); // do
 	default_POV_options.light_position[0] *= 0.5; 
+
+	// process all the files 
 	
-	// start output 
-	char temp [1024]; 
-	sprintf( temp , "pov%08i.pov" , options.time_index ); 
-	options.filename = temp ; 
-	std::ofstream os( options.filename.c_str() , std::ios::out ); 
+	for( int n =0 ; n < file_indices.size() ; n++ )
+	{	
+		// read the matrix 
+		// std::vector< std::vector<double> > MAT = read_matlab( options.filename.c_str() );
+		std::string filename = create_filename( file_indices[n] ); 
+		std::vector< std::vector<double> > MAT = read_matlab( filename );
+		std::cout << "Matrix size: " << MAT.size() << " x " << MAT[0].size() << std::endl; 
+		
+		// start output 
+		char temp [1024]; 
+		// sprintf( temp , "pov%08i.pov" , options.time_index ); 
+		sprintf( temp , "pov%08i.pov" , file_indices[n] ); 
+		filename = temp ; 
+		std::ofstream os( filename.c_str() , std::ios::out ); 
+		
+		std::cout << "Creating file " << filename << " for output ... " << std::endl; 
+		Write_POV_start( os ); 
+		
+		// now, place the cells	
+		std::cout << "Writing " << MAT[0].size() << " cells ... " <<std::endl; 
+		
+		plot_all_cells(os,MAT);
+		os.close(); 
+		
+		std::cout << "done!" << std::endl << std::endl ; 
+	}
 	
-	std::cout << "Creating file " << options.filename << " for output ... " << std::endl; 
-	Write_POV_start( os ); 
-	
-	// now, place the cells	
-	std::cout << "Writing " << MAT[0].size() << " cells ... " <<std::endl; 
-	
-	plot_all_cells(os,MAT);
-	os.close(); 
-	
-	std::cout << "done!" << std::endl; 
+	std::cout << "Done processing all " << file_indices.size() << " files!" << std::endl << std::endl; 
 	
 	return 0;
 }

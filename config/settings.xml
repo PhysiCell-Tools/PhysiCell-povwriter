@@ -14,7 +14,7 @@
 	</options>
 
 	<save> <!-- done --> 
-		<folder>sample</folder> <!-- use . for root --> 
+		<folder>output</folder> <!-- use . for root --> 
 		<filebase>output</filebase> 
 		<time_index>3696</time_index> 
 	</save>
