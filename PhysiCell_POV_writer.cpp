@@ -83,6 +83,19 @@ int main( int argc, char* argv[] )
 {
 	display_splash( std::cout ); 
 	
+	char* my_text = (char*) "0:1:10"; 
+	
+	std::vector<int> indices = create_index_list( my_text ); 
+	std::cout << "["; 
+	for( int i=0; i < indices.size() ; i++ )
+	{
+		std::cout << indices[i] << " " ; 
+	}
+	
+	std::cout << "]" <<std::endl; 
+	
+	exit(0); 
+	
 	std::string config_file = "./config/settings.xml"; 
 	
 	// load and parse settings file(s)

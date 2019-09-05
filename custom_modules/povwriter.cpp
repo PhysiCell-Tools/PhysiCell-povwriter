@@ -594,10 +594,22 @@ void display_splash( std::ostream& os )
 	os << "povwriter version " << VERSION << std::endl << std::endl; 
 	
 	os << "Usage: " << std::endl 
-		<< "povwriter \t\t:\t " << "run povwriter with config file ./config/settings.xml" << std::endl << std::endl
+	   << "================================================================================" << std::endl 
+		<< "povwriter\t\t: " << "run povwriter with config file ./config/settings.xml" << std::endl << std::endl
 
-		<< "povwriter FILENAME.xml \t:\t " << "run povwriter with config file FILENAME.xml" << std::endl << std::endl;
+		<< "povwriter FILENAME.xml\t: " << "run povwriter with config file FILENAME.xml" << std::endl << std::endl
 
+		<< "povwriter x:y:z\t\t: " << "run povwriter on data in FOLDER with indices from x " << std::endl 
+		<< "               \t\t  " << "to y in incremenets of z" << std::endl << std::endl 
+		<< "               \t\t " << "Example: ./povwriter 0:2:10 processes files: " << std::endl 
+		<< "               \t\t " << "         ./FOLDER/FILEBASE00000000_physicell_cells.mat" << std::endl 
+		<< "               \t\t " << "         ./FOLDER/FILEBASE00000002_physicell_cells.mat" << std::endl 
+		<< "               \t\t " << "         ..." << std::endl 
+		<< "               \t\t " << "         ./FOLDER/FILEBASE00000010_physicell_cells.mat" << std::endl 
+		<< "               \t\t " << "(See the config file to set FOLDER and FILEBASE)" << std::endl << std::endl 
+		
+		
+		<< std::endl; 
 
 	return; 
 }
@@ -609,12 +621,41 @@ bool is_xml( std::string filename )
 	return false;
 }
 
-
 bool is_xml( char* filename )
 {
 	if( strstr( filename, ".xml" ) )
 	{ return true; }
 	return false;
+}
+
+std::vector<int> create_index_list( char* input )
+{
+	std::vector<int> output; 
+	if( strlen( input )  < 1 )
+	{ return output; } 
+	
+	bool done = false; 
+	
+	// process list of the form x:y:z 
+	char* search = input; 
+	char* pch = strstr( search, ":" ); 
+	if( pch+1 )
+	{
+		int start = atoi( search ); 
+		int increment = atoi( pch+1 ); 
+		pch = strstr( pch+1 , ":" ); 
+		int end = atoi( pch+1 ); 
+		
+		for( int i=start ; i <= end ; i += increment )
+		{
+			output.push_back( i ); 
+		}
+		return output; 
+	}
+	
+	// process list in the form of a comma-separated list 
+	
+	return output; 
 }
 
 

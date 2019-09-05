@@ -148,3 +148,4 @@ void display_splash( std::ostream& os );
 bool is_xml( std::string filename ); 
 bool is_xml( char* filename ); 
 
+std::vector<int> create_index_list( char* input ); 
