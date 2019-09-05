@@ -83,7 +83,7 @@ int main( int argc, char* argv[] )
 {
 	display_splash( std::cout ); 
 	
-	char* my_text = (char*) "0:1:10"; 
+	char* my_text = (char*) "0 1 2 17 8"; 
 	
 	std::vector<int> indices = create_index_list( my_text ); 
 	std::cout << "["; 
@@ -98,13 +98,12 @@ int main( int argc, char* argv[] )
 	
 	std::string config_file = "./config/settings.xml"; 
 	
-	// load and parse settings file(s)
-	
 	bool XML_status = false; 
 	if( argc > 1 )
 	{
 		if( is_xml(argv[1]) )
 		{
+			// 
 			config_file = argv[1]; 
 		}
 		else

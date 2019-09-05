@@ -631,15 +631,13 @@ bool is_xml( char* filename )
 std::vector<int> create_index_list( char* input )
 {
 	std::vector<int> output; 
-	if( strlen( input )  < 1 )
+	if( strlen( input ) < 1 )
 	{ return output; } 
-	
-	bool done = false; 
 	
 	// process list of the form x:y:z 
 	char* search = input; 
 	char* pch = strstr( search, ":" ); 
-	if( pch+1 )
+	if( pch )
 	{
 		int start = atoi( search ); 
 		int increment = atoi( pch+1 ); 
@@ -654,6 +652,32 @@ std::vector<int> create_index_list( char* input )
 	}
 	
 	// process list in the form of a comma-separated list 
+	search = input; 
+	pch = strstr( search, "," ); 
+	if( pch )
+	{
+		output.push_back( atoi(input) ); 
+		while( pch ) 
+		{
+			output.push_back( atoi(pch+1) ); 
+			pch = strstr( pch+1 , "," ); 
+		}
+		return output; 
+	}
+	
+	// process list in the form of a space-separated list 
+	search = input; 
+	pch = strstr( search, " " ); 
+	if( pch )
+	{
+		output.push_back( atoi(input) ); 
+		while( pch ) 
+		{
+			output.push_back( atoi(pch+1) ); 
+			pch = strstr( pch+1 , " " ); 
+		}
+		return output; 
+	}	
 	
 	return output; 
 }
