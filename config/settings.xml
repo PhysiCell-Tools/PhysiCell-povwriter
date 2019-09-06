@@ -8,7 +8,7 @@
 	</camera>
 
 	<options> <!-- done -->
-		<use_standard_colors>false</use_standard_colors>
+		<use_standard_colors>true</use_standard_colors>
 		<nuclear_offset units="micron">0.1</nuclear_offset> <!-- how far to clip nuclei in front of cyto --> 
 		<cell_bound units="micron">750</cell_bound> <!-- only plot if |x| , |y| , |z| < cell_bound -->
 		<threads>8</threads>
