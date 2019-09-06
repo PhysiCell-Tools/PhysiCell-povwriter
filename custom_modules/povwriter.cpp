@@ -151,11 +151,15 @@ void plot_cell( std::ostream& os, std::vector<std::vector<double>>& MAT, int i )
 					<< default_POV_options.clipping_planes[i].coefficients[1] << "," 
 					<< default_POV_options.clipping_planes[i].coefficients[2] << ">, " 
 					<< default_POV_options.clipping_planes[i].coefficients[3] << std::endl 
-					<< " pigment {color rgbf<" 
+//					<< " pigment {color rgbf<" 
+//						<< colors.cyto_pigment[0] << "," 
+//						<< colors.cyto_pigment[1] << "," 
+//						<< colors.cyto_pigment[2] << "," 
+//						<< colors.cyto_pigment[3] << ">}" << std::endl
+					<< " pigment {color rgb<" 
 						<< colors.cyto_pigment[0] << "," 
 						<< colors.cyto_pigment[1] << "," 
-						<< colors.cyto_pigment[2] << "," 
-						<< colors.cyto_pigment[3] << ">}" << std::endl
+						<< colors.cyto_pigment[2] << ">}" << std::endl
 					<< " finish {ambient " << colors.finish[0] 
 					<< " diffuse " << colors.finish[1] 
 					<< " specular " << colors.finish[2] << "} }" << std::endl;
@@ -222,11 +226,16 @@ void plot_cell( std::ostream& os, std::vector<std::vector<double>>& MAT, int i )
 					<< default_POV_options.clipping_planes[i].coefficients[1] << "," 
 					<< default_POV_options.clipping_planes[i].coefficients[2] << ">, " 
 					<< default_POV_options.clipping_planes[i].coefficients[3]+nuclear_offset << std::endl 
-					<< " pigment {color rgbf<" 
+//					<< " pigment {color rgbf<" 
+//						<< colors.nuclear_pigment[0] << "," 
+//						<< colors.nuclear_pigment[1] << "," 
+//						<< colors.nuclear_pigment[2] << "," 
+//						<< colors.nuclear_pigment[3] << ">}" << std::endl
+					<< " pigment {color rgb<" 
 						<< colors.nuclear_pigment[0] << "," 
 						<< colors.nuclear_pigment[1] << "," 
-						<< colors.nuclear_pigment[2] << "," 
-						<< colors.nuclear_pigment[3] << ">}" << std::endl
+						<< colors.nuclear_pigment[2] << ">}" << std::endl
+						
 					<< " finish {ambient " << colors.finish[0] 
 					<< " diffuse " << colors.finish[1] 
 					<< " specular " << colors.finish[2] << "} }" << std::endl;
@@ -315,8 +324,6 @@ void cancer_immune_pigment_and_finish_function( Cell_Colorset& colors, std::vect
 		colors.nuclear_pigment[0] = colors.cyto_pigment[0] * 0.125; 
 		colors.nuclear_pigment[1] = colors.cyto_pigment[1] * 0.125; 
 		colors.nuclear_pigment[2] = colors.cyto_pigment[2] * 0.125; 
-		
-		//	sprintf( szTempString , "rgb(%u,%u,%u)", (int)round(output[0][0]/2.0) , (int)round(output[0][1]/2.0) , (int)round(output[0][2]/2.0) );
 		return; 
 	}	
 	

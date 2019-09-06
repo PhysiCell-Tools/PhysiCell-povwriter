@@ -15,14 +15,14 @@
 	</options>
 
 	<save> <!-- done --> 
-		<folder>sample</folder> <!-- use . for root --> 
+		<folder>output</folder> <!-- use . for root --> 
 		<filebase>output</filebase> 
 		<time_index>3696</time_index> 
 	</save>
 	
 	<clipping_planes> <!-- done --> 
 		<clipping_plane>0,-1,0,0</clipping_plane>
-		<clipping_plane>-1,0,1,0</clipping_plane>
+		<clipping_plane>-1,0,0,0</clipping_plane>
 		<clipping_plane>0,0,1,0</clipping_plane>
 	</clipping_planes>
 	
@@ -33,36 +33,36 @@
 		<!-- If the cell's type is not recognized, the standard coloring function will default to 0 --> 
 		<cell_colors type="0">
 			<live>
-				<cytoplasm>.25,1,.25,0.0</cytoplasm> <!-- red,green,blue,filter --> 
-				<nuclear>0.03,0.125,.03,0.0</nuclear>
+				<cytoplasm>.25,1,.25</cytoplasm> <!-- red,green,blue,filter --> 
+				<nuclear>0.03,0.125</nuclear>
 				<finish>0.05,1,0.1</finish> <!-- ambient,diffuse,specular -->
 			</live>
 			<apoptotic>
-				<cytoplasm>1,0,0,0</cytoplasm> <!-- red,green,blue,filter --> 
-				<nuclear>0.125,0,0,0</nuclear>
+				<cytoplasm>1,0,0</cytoplasm> <!-- red,green,blue,filter --> 
+				<nuclear>0.125,0,0</nuclear>
 				<finish>0.05,1,0.1</finish> <!-- ambient,diffuse,specular -->
 			</apoptotic>
 			<necrotic>
-				<cytoplasm>1,0.5412,0.1490,0</cytoplasm> <!-- red,green,blue,filter --> 
-				<nuclear>0.125,0.06765,0.018625,0</nuclear>
+				<cytoplasm>1,0.5412,0.1490</cytoplasm> <!-- red,green,blue,filter --> 
+				<nuclear>0.125,0.06765,0.018625</nuclear>
 				<finish>0.01,0.5,0.1</finish> <!-- ambient,diffuse,specular -->
 			</necrotic>
 		</cell_colors>
 		
 		<cell_colors type="1">
 			<live>
-				<cytoplasm>0.25,0.25,1,0</cytoplasm> <!-- red,green,blue,filter --> 
-				<nuclear>0.03,0.03,0.125,0</nuclear>
+				<cytoplasm>0.25,0.25,1</cytoplasm> <!-- red,green,blue,filter --> 
+				<nuclear>0.03,0.03,0.125</nuclear>
 				<finish>0.05,1,0.1</finish> <!-- ambient,diffuse,specular -->
 			</live>
 			<apoptotic>
-				<cytoplasm>1,0,0,0</cytoplasm> <!-- red,green,blue,filter --> 
-				<nuclear>0.125,0,0,0</nuclear>
+				<cytoplasm>1,0,0</cytoplasm> <!-- red,green,blue,filter --> 
+				<nuclear>0.125,0,0</nuclear>
 				<finish>0.05,1,0.1</finish> <!-- ambient,diffuse,specular -->
 			</apoptotic>
 			<necrotic>
-				<cytoplasm>1,0.5412,0.1490,0</cytoplasm> <!-- red,green,blue,filter --> 
-				<nuclear>0.125,0.06765,0.018625,0</nuclear>
+				<cytoplasm>1,0.5412,0.1490</cytoplasm> <!-- red,green,blue,filter --> 
+				<nuclear>0.125,0.06765,0.018625</nuclear>
 				<finish>0.01,0.5,0.1</finish> <!-- ambient,diffuse,specular -->
 			</necrotic>
 		</cell_colors>

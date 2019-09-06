@@ -229,8 +229,9 @@ void Write_POV_start( std::ostream& os )
 void Write_POV_sphere( std::ostream& os, std::vector<double>& center, double radius, std::vector<double>& pigment, std::vector<double>& finish )
 {
 	os 	<< "sphere" << std::endl << "{" << std::endl 
-		<< " <" << center[0] << "," << center[1] << "," << center[2] << ">, " << radius 
-		<< " pigment {color rgbf<" << pigment[0] << "," << pigment[1] << "," << pigment[2] << "," << pigment[3] << ">}" << std::endl
+		<< " <" << center[0] << "," << center[1] << "," << center[2] << ">, " << radius
+//		<< " pigment {color rgbf<" << pigment[0] << "," << pigment[1] << "," << pigment[2] << "," << pigment[3] << ">}" << std::endl
+		<< " pigment {color rgb<" << pigment[0] << "," << pigment[1] << "," << pigment[2] << ">}" << std::endl
 		<< " finish {ambient " << finish[0] << " diffuse " << finish[1] << " specular " << finish[2] << "}" << std::endl;
 		
 		if( default_POV_options.no_shadow )
