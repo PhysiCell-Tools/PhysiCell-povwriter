@@ -603,7 +603,13 @@ void my_pigment_and_finish_function( Cell_Colorset& colors, std::vector<std::vec
 
 void display_splash( std::ostream& os )
 {
-	os << "povwriter version " << VERSION << std::endl << std::endl; 
+	os << std::endl 
+	   << "povwriter version " << VERSION << std::endl 
+	   << "================================================================================" << std::endl 
+	   << std::endl; 
+	
+	os << "Copyright (c) Paul Macklin 2019, on behalf of the PhysiCell project" << std::endl
+	   << "OSI License: BSD-3-Clause (see LICENSE.txt)" << std::endl << std::endl; 
 	
 	os << "Usage: " << std::endl 
 	   << "================================================================================" << std::endl 
@@ -628,6 +634,12 @@ void display_splash( std::ostream& os )
 		<< "               \t\t " << "(Note that there are no spaces.)" << std::endl 
 		<< "               \t\t " << "(See the config file to set FOLDER and FILEBASE)" << std::endl << std::endl 
 		
+		<< "Code updates at https://github.com/PhysiCell-Tools/PhysiCell-povwriter " << std::endl << std::endl 
+		
+		<< "Tutorial & documentation at http://MathCancer.org/blog/povwriter " << std::endl 
+		
+	   << "================================================================================" << std::endl 
+	   
 		<< std::endl; 
 
 	return; 
