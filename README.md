@@ -11,7 +11,6 @@ Note that users will then need to run POV-Ray on the .pov files, and potentially
 Please see http://mathcancer.org/blog/povwriter for a full tutorial. 
 
 ## Syntax 
-================================================================================  
     povwriter		: run povwriter with config file ./config/settings.xml
     
     povwriter FILENAME.xml	: run povwriter with config file FILENAME.xml
