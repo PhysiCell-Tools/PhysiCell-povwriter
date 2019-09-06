@@ -85,7 +85,7 @@ int main( int argc, char* argv[] )
 {
 	display_splash( std::cout ); 
 	
-	std::string config_file = "./config/settings.xml"; 
+	std::string config_file = "./config/povwriter-settings.xml"; 
 	
 	std::vector<int> file_indices; 
 	
