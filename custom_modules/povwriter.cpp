@@ -726,6 +726,52 @@ std::vector<int> create_index_list( char* input )
 
 void my_pigment_and_finish_function( Cell_Colorset& colors, std::vector<std::vector<double>>& MAT, int i )
 {
+	// first, some housekeeping
+	static int type_index = 5; //column that stores cell type (integer)
+	static int cycle_model_index = 6; // column that stores which cycle (or death) model (integer) 
+	static int data_index = 27; // 
+
+	// sample code: 
+	// some simple processing to see if the cell 
+	// is live, apoptotic, or necrotic 
+	
+/*
+	bool necrotic = false; 
+	bool apoptotic = false; 
+	bool live = true; 
+	int cycle_model = (int) round( MAT[cycle_model_index][i] ); 
+	if( cycle_model == 100 )
+	{
+		apoptotic = true;
+		live = false;
+	}		
+	if( cycle_model == 101 )
+	{
+		necrotic = true;
+		live = false;
+	}		
+*/
+
+	// sample code: 
+	// accessing data in index 27  
+	// using it to shade cytoplasm 
+	// from blue (data = 0) to yellow (data = 1)
+	// (assuming it varies from 0 to 1) 
+
+/*
+	static int data_index = 27; // 
+	
+	double my_data = MAT[data_index][i];
+	colors.cyto_pigment[0] = my_data; 
+	colors.cyto_pigment[1] = my_data; 
+	colors.cyto_pigment[2] = 1.0 - my_data; 
+*/
+	
+	// add your computations / queries to edit 
+	// the cytoplasm and nuclear pigment colors 
+	
+	// or call another function, like below. 
+	
 	cancer_immune_pigment_and_finish_function(colors,MAT,i); 
 	return; 
 }
