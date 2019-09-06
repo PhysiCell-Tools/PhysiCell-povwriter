@@ -1,4 +1,6 @@
-# PhysiCell POV-writer
+# PhysiCell POV-writer (Version 1.0.0)
+Copyright (c) Paul Macklin 2019, on behalf of PhysiCell & PhysiCell-Tools  
+OSI License: BSD-3-Clause (see LICENSE.txt)  
 
 This is an adaptation of Paul Macklin's 3-D cancer immune visualizations.
 
@@ -9,15 +11,7 @@ Note that users will then need to run POV-Ray on the .pov files, and potentially
 Please see http://mathcancer.org/blog/povwriter for a full tutorial. 
 
 ## Syntax 
-
-povwriter version 1.0.0
-================================================================================
-
-Copyright (c) Paul Macklin 2019, on behalf of the PhysiCell project
-OSI License: BSD-3-Clause (see LICENSE.txt)
-
-Usage: 
-================================================================================
+================================================================================  
     povwriter		: run povwriter with config file ./config/settings.xml
     
     povwriter FILENAME.xml	: run povwriter with config file FILENAME.xml
