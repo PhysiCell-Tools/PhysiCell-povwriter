@@ -460,8 +460,6 @@ bool load_config_file( std::string filename )
 	char temp [1024]; 
 	sprintf( temp , "./%s/%s%08i_cells_physicell.mat" , options.folder.c_str(), options.filebase.c_str() , options.time_index );
 	options.filename = temp; 
-
-	std::cout << "Processing file " << options.filename << "... " << std::endl; 
 	
 	// decide which function to use 
 	
@@ -595,12 +593,6 @@ Options::Options()
 	return; 
 }
 
-void my_pigment_and_finish_function( Cell_Colorset& colors, std::vector<std::vector<double>>& MAT, int i )
-{
-	cancer_immune_pigment_and_finish_function(colors,MAT,i); 
-	return; 
-}
-
 void display_splash( std::ostream& os )
 {
 	os << std::endl 
@@ -731,4 +723,10 @@ std::vector<int> create_index_list( char* input )
 	return output; 
 }
 
+
+void my_pigment_and_finish_function( Cell_Colorset& colors, std::vector<std::vector<double>>& MAT, int i )
+{
+	cancer_immune_pigment_and_finish_function(colors,MAT,i); 
+	return; 
+}
 

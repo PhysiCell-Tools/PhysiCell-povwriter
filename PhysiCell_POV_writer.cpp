@@ -126,6 +126,8 @@ int main( int argc, char* argv[] )
 		// read the matrix 
 		// std::vector< std::vector<double> > MAT = read_matlab( options.filename.c_str() );
 		std::string filename = create_filename( file_indices[n] ); 
+		std::cout << "Processing file " << filename << "... " << std::endl; 
+
 		std::vector< std::vector<double> > MAT = read_matlab( filename );
 		std::cout << "Matrix size: " << MAT.size() << " x " << MAT[0].size() << std::endl; 
 		
