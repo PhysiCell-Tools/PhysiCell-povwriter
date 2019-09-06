@@ -38,12 +38,12 @@ BioFVM_OBJECTS := BioFVM_vector.o BioFVM_matlab.o
 
 PhysiCell_core_OBJECTS :=  
 
-PhysiCell_module_OBJECTS := PhysiCell_POV.o 
-# PhysiCell_pugixml.o PhysiCell_settings.o
+PhysiCell_module_OBJECTS := PhysiCell_POV.o PhysiCell_pugixml.o
+# PhysiCell_settings.o
 
 # put your custom objects here (they should be in the custom_modules directory)
 
-PhysiCell_custom_module_OBJECTS := 
+PhysiCell_custom_module_OBJECTS := povwriter.o 
 
 pugixml_OBJECTS := pugixml.o
 
@@ -71,7 +71,13 @@ pugixml.o: ./BioFVM/pugixml.cpp
 PhysiCell_POV.o: ./modules/PhysiCell_POV.cpp
 	$(COMPILE_COMMAND) -c ./modules/PhysiCell_POV.cpp
 	
+PhysiCell_pugixml.o: ./modules/PhysiCell_pugixml.cpp
+	$(COMPILE_COMMAND) -c ./modules/PhysiCell_pugixml.cpp
+	
 # user-defined PhysiCell modules
+
+povwriter.o: ./custom_modules/povwriter.cpp
+	$(COMPILE_COMMAND) -c ./custom_modules/povwriter.cpp
 
 # cleanup
 
