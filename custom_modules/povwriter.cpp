@@ -83,7 +83,7 @@ std::string VERSION = "1.0.0";
 void plot_cell( std::ostream& os, std::vector<std::vector<double>>& MAT, int i )
 {
 	// bookkeeping 
-	static Cell_Colorset colors; 
+	Cell_Colorset colors; 
 	static bool setup_done = false; 
 	if( setup_done == false )
 	{
@@ -93,8 +93,8 @@ void plot_cell( std::ostream& os, std::vector<std::vector<double>>& MAT, int i )
 		setup_done = true; 
 	}
 	
-	static std::vector<double> center = {0,0,0};
-	static double radius; 
+	std::vector<double> center = {0,0,0};
+	double radius; 
 	static double temp_constant = 0.238732414637843; // 3/(4*pi)
 	
 	// get position 
@@ -488,11 +488,13 @@ bool load_config_file( std::string filename )
 		
 		// convert to a vector 
 		csv_to_vector( temp.c_str() , cp.coefficients ); 
+		cp.coefficients_to_normal_point();
 		
 		// add the clipping plane 
-		default_POV_options.clipping_planes.push_back( cp ); 
+		// need to fix this! 
+		default_POV_options.clipping_planes.push_back( cp );
 		
-		// find teh next clipping plane 
+		// find the next clipping plane 
 		node1 = node1.next_sibling(); 
 		i++; 
 	}

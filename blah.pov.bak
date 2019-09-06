@@ -1,0 +1,37 @@
+#include "colors.inc"
+#include "shapes.inc" 
+
+global_settings {
+  max_trace_level 1
+  assumed_gamma 1
+}
+
+background {
+  color rgb <1,1,1>
+}
+
+camera {
+  location <-918.559,-918.559,750>
+  right x
+  look_at <0,0,0>
+  right <-1,0,0>
+  up <0,0,1>
+  sky <0,0,1>
+ }
+
+light_source {
+  <-500,-1000,3000>
+  color rgb 0.75
+  fade_distance 3464.1
+  fade_power 2
+}      
+
+intersection{      
+sphere{ <0,0,0>, 150 }
+plane{ <-0.5774,-0.5774, 0.5774>, 57.7350}      
+plane{ <-1,0,0>, 0}      
+plane{ <0,-1,0>, 0}      
+plane{ <0,0,1>, 0}      
+pigment {color rgbf<0.25,1,0.25,0>}
+ finish {ambient 0.05 diffuse 1 specular 0.1}
+}
