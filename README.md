@@ -42,7 +42,4 @@ Usage:
                    		 (See the config file to set FOLDER and FILEBASE)
     [/code]                   
 
-Code updates at https://github.com/PhysiCell-Tools/PhysiCell-povwriter 
 
-Tutorial & documentation at http://MathCancer.org/blog/povwriter 
-================================================================================
