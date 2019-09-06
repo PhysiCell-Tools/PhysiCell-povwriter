@@ -8,21 +8,21 @@
 	</camera>
 
 	<options> <!-- done -->
-		<use_standard_colors>true</use_standard_colors>
+		<use_standard_colors>false</use_standard_colors>
 		<nuclear_offset units="micron">0.1</nuclear_offset> <!-- how far to clip nuclei in front of cyto --> 
 		<cell_bound units="micron">750</cell_bound> <!-- only plot if |x| , |y| , |z| < cell_bound -->
 		<threads>8</threads>
 	</options>
 
 	<save> <!-- done --> 
-		<folder>output</folder> <!-- use . for root --> 
+		<folder>sample</folder> <!-- use . for root --> 
 		<filebase>output</filebase> 
-		<time_index>500</time_index> 
+		<time_index>3696</time_index> 
 	</save>
 	
 	<clipping_planes> <!-- done --> 
 		<clipping_plane>0,-1,0,0</clipping_plane>
-		<clipping_plane>-1,0,0,0</clipping_plane>
+		<clipping_plane>-1,0,1,0</clipping_plane>
 		<clipping_plane>0,0,1,0</clipping_plane>
 	</clipping_planes>
 	
@@ -33,8 +33,8 @@
 		<!-- If the cell's type is not recognized, the standard coloring function will default to 0 --> 
 		<cell_colors type="0">
 			<live>
-				<cytoplasm>.25,1,.25,0</cytoplasm> <!-- red,green,blue,filter --> 
-				<nuclear>0.03,0.125,.03,0</nuclear>
+				<cytoplasm>.25,1,.25,0.0</cytoplasm> <!-- red,green,blue,filter --> 
+				<nuclear>0.03,0.125,.03,0.0</nuclear>
 				<finish>0.05,1,0.1</finish> <!-- ambient,diffuse,specular -->
 			</live>
 			<apoptotic>
@@ -44,7 +44,7 @@
 			</apoptotic>
 			<necrotic>
 				<cytoplasm>1,0.5412,0.1490,0</cytoplasm> <!-- red,green,blue,filter --> 
-				<nuclear>0.125,0.06765,0.018625</nuclear>
+				<nuclear>0.125,0.06765,0.018625,0</nuclear>
 				<finish>0.01,0.5,0.1</finish> <!-- ambient,diffuse,specular -->
 			</necrotic>
 		</cell_colors>
@@ -62,7 +62,7 @@
 			</apoptotic>
 			<necrotic>
 				<cytoplasm>1,0.5412,0.1490,0</cytoplasm> <!-- red,green,blue,filter --> 
-				<nuclear>0.125,0.06765,0.018625</nuclear>
+				<nuclear>0.125,0.06765,0.018625,0</nuclear>
 				<finish>0.01,0.5,0.1</finish> <!-- ambient,diffuse,specular -->
 			</necrotic>
 		</cell_colors>
