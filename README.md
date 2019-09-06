@@ -33,6 +33,6 @@ Please see http://mathcancer.org/blog/povwriter for a full tutorial.
                    		          ./FOLDER/FILEBASE00000017_physicell_cells.mat
                    		 (Note that there are no spaces.)
                    		 (See the config file to set FOLDER and FILEBASE)
-    [/code]                   
+              
 
 
