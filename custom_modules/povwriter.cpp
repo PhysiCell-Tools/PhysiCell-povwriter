@@ -458,7 +458,7 @@ bool load_config_file( std::string filename )
 	options.time_index = xml_get_int_value( node, "time_index" ) ; 
 	
 	char temp [1024]; 
-	sprintf( temp , "./%s/%s%08i_cells_physicell.mat" , options.folder.c_str(), options.filebase.c_str() , options.time_index );
+	sprintf( temp , "./%s/%s%08i_cells.mat" , options.folder.c_str(), options.filebase.c_str() , options.time_index );
 	options.filename = temp; 
 	
 	// decide which function to use 
@@ -656,7 +656,7 @@ std::string create_filename( std::string folder, std::string filebase , int inde
 	std::string output; 
 	
 	char temp [1024]; 
-	sprintf( temp , "./%s/%s%08i_cells_physicell.mat" , folder.c_str(), filebase.c_str() , index );
+	sprintf( temp , "./%s/%s%08i_cells.mat" , folder.c_str(), filebase.c_str() , index );
 	output = temp; 
 	
 	return output; 
